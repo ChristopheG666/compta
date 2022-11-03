@@ -1,0 +1,71 @@
+body {
+    background-color: lightblue;
+    -webkit-text-size-adjust: 200%;
+}
+
+.title {
+    font-weight: bold;
+    font-size: larger;
+}
+
+#expensetable {
+    border: 1px solid;
+    table-layout: auto;
+}
+
+.header {
+    font-weight: bold;
+    font-size: large;
+}
+
+.cell {
+  border: 1px solid;
+}
+
+.d {
+    text-align: center;
+    font-size: small;
+    width: 120px;
+}
+
+.l {
+    min-width: 10em;
+    max-width: 20em;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.v {
+    
+    text-align: right;
+    width: 4em;
+}
+
+.t {  
+    text-align: right;
+    width: 4em;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.label {
+  width: 20em;
+}
+
+.input {
+  width: 20em;
+}
+
+.refresh {
+  width: 10em;
+}
+
+.header {
+    text-align: center;
+}

@@ -1,0 +1,20 @@
+{
+    "expense":
+    [
+      
+    ],
+    "labels":
+    {
+        "d": "Date",
+        "l": "Description",
+        "t": "Total",
+        "v": "Valeur"
+    },
+    "order":
+    [
+        "d",
+        "l",
+        "v",
+        "t"
+    ]
+}

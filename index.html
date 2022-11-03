@@ -1,0 +1,153 @@
+<HTML>
+
+<HEAD>
+    <LINK REL="stylesheet" HREF="compta.css">
+    <TITLE>
+        Compta
+    </TITLE>
+</HEAD>
+
+<BODY>
+    <DIV CLASS="title">
+        Compta <BUTTON ID="refresh" CLASS="refresh input" ONCLICK="readExpenseTable()">Refresh</BUTTON>
+    </DIV>
+    <BR>
+    <DIV CLASS="ldate label">Date</DIV><INPUT TYPE="date" ID="date" CLASS="idate input" />
+    <DIV CLASS="ldesc label">Description</DIV><INPUT TYPE="text" ID="label" CLASS="idesc input" />
+    <DIV CLASS="lvalue label">Valeur</DIV><INPUT TYPE="text" ID="value" CLASS="ivalue input" /> <BR><BR>
+    <BUTTON ID="go" CLASS="igo input" ONCLICK="addNewExpense()">Ajouter</BUTTON>
+    <HR>
+    <DIV id="tablediv"></DIV>
+    
+    <SCRIPT>
+    const DEBUG = true;
+    newId = 0;
+
+    function httpGet(theUrl, param) {
+        var xmlHttp = null;
+
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false);
+        xmlHttp.send(param);
+        return xmlHttp.responseText;
+    }
+
+    function readExpenseTable() {
+        comptaStr = httpGet("/read", null);
+        if (DEBUG)
+            console.log("Received compta content: " + comptaStr);
+        compta = JSON.parse(comptaStr);
+        if (DEBUG)
+            console.log(compta);
+        // if (DEBUG)
+        // 		document.write("<BR>" + JSON.stringify(compta, null, 4) + "<BR>");
+
+        const labels = compta.labels;
+        const order = compta.order;
+        const totalL = order[order.length-1];
+        newId = compta.expense.length;
+
+        // Clear any previsous table
+        document.getElementById('expensetable')?.remove();
+
+        // Draw the expense table
+        tbl = document.createElement('table');
+        tbl.id = 'expensetable';
+
+        header = tbl.createTHead();
+        const tr = header.insertRow();
+        tr.classList.add('header');
+        // Create the header
+        for (const row of order) {
+            const td = tr.insertCell();
+            td.classList.add('header');
+            td.classList.add(row);
+            td.innerHTML = labels[row];
+        }
+        {
+	        const td = tr.insertCell();
+	        td.classList.add('header');
+	        td.classList.add('total');
+	        td.innerHTML = "Total";
+	    }
+	    // Compute total and newId
+        total = 0;
+        for (var i = compta.expense.length - 1; i >= 0; i--) {
+        	total += compta.expense[i].v;
+        	compta.expense[i][totalL] = total;
+
+        	if (compta.expense[i].id >= newId)
+            	newId = compta.expense[i].id + 1;
+        }
+
+        for (const expense of compta.expense) {
+        	const tr = tbl.insertRow();
+            tr.classList.add('row');
+            for (const row of order) {
+                const td = tr.insertCell();
+                td.classList.add('cell');
+                td.classList.add(row);
+                value = expense[row]
+
+                if (row == 'v' || row == 't') {
+                	value = parseFloat(value);
+                	if (value > 0.0)
+                		td.classList.add('green');
+                	else
+                		td.classList.add('red');
+                }
+
+                
+                if (row == 'd') // Convert to date
+                    value = new Date(value).toLocaleDateString();
+
+                td.innerHTML = value;
+            }
+
+            // Add the delete button
+            const td = tr.insertCell();
+            td.classList.add('cell');
+            td.classList.add('delete');
+            button = document.createElement("button");
+            td.appendChild(button);
+            button.innerHTML = "X";
+            button.addEventListener("click", function () {
+                if (confirm("Etes vous sur de vouloir effacer cette depense?")) {
+                	if (DEBUG)
+                		console.log("Deleting " + expense['id'] + " / " + JSON.stringify(expense));
+                	httpGet("/delete?json=" + JSON.stringify(expense['id']));
+                	readExpenseTable();
+                }
+            });
+        }
+        const div = document.getElementById('tablediv');
+        div.appendChild(tbl);
+    }
+
+    function addNewExpense() {
+        const date = document.getElementById('date').valueAsDate;
+        const desc = document.getElementById('label').value;
+        const value = parseFloat(document.getElementById('value').value);
+        console.log(document.getElementById('value').value);
+		console.log(value);
+        if (isNaN(value)) {
+        	alert("Please enter a valid number for the value");
+        	return;
+        }
+
+        param = { id: newId, d: date.getTime(), l: desc, v: value };
+        if (DEBUG)
+            console.log("add |" + date + "|" + desc + "|" + value + " => " + JSON.stringify(param));
+        httpGet("/add?json=" + JSON.stringify(param));
+
+        readExpenseTable();
+    }
+
+    readExpenseTable();
+
+    // Set the current date
+    document.getElementById('date').valueAsDate = new Date();
+    </SCRIPT>
+</BODY>
+
+</HTML>
