@@ -5,7 +5,7 @@ const { parse: parseQuery } = require('querystring');
 const fs = require('fs');
 
 const host = '0.0.0.0';
-const port = 8000;
+const port = 8088;
 const index_filename = 'index.html';
 const compa_filename = 'compta.json';
 const serverOrigin = 'http://' + host + ':' + port;
@@ -13,11 +13,11 @@ const serverOrigin = 'http://' + host + ':' + port;
 const requestListener = function(req, res) {
     console.log(req.url);
     const url = new URL(req.url, serverOrigin);
-    console.log(url);
+    //console.log(url);
 
     // Parse the URL query. The leading '?' has to be removed before this.
     const query = parseQuery(url.search.substr(1));
-    console.log(query);
+    //console.log(query);
 
     try {
         switch (url.pathname) {
@@ -69,13 +69,13 @@ const requestListener = function(req, res) {
                     const contents = fs.readFileSync(__dirname + "/" + compa_filename);
                     expense = JSON.parse(contents);
                     // Erase the id
-                    console.log(json);
+                    //console.log(json);
                     for (var i = 0; i < expense.expense.length; i++) {
                         console.log(expense.expense[i].id );
                         if (expense.expense[i].id === json) {
                             var spliced = expense.expense.splice(i, 1);
-                            console.log("Removed element: " + JSON.stringify(spliced));
-                            console.log("Remaining elements: " + JSON.stringify(expense.expense));
+                            //console.log("Removed element: " + JSON.stringify(spliced));
+                            //console.log("Remaining elements: " + JSON.stringify(expense.expense));
                         }
                     }
                     fs.writeFileSync(compa_filename, JSON.stringify(expense));

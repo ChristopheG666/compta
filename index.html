@@ -20,7 +20,7 @@
     <DIV id="tablediv"></DIV>
     
     <SCRIPT>
-    const DEBUG = true;
+    const DEBUG = false;
     newId = 0;
 
     function httpGet(theUrl, param) {
@@ -71,9 +71,9 @@
 	        td.innerHTML = "Total";
 	    }
 	    // Compute total and newId
-        total = 0;
+        total = 0.0;
         for (var i = compta.expense.length - 1; i >= 0; i--) {
-        	total += compta.expense[i].v;
+            total += compta.expense[i].v;
         	compta.expense[i][totalL] = total;
 
         	if (compta.expense[i].id >= newId)
@@ -87,7 +87,7 @@
                 const td = tr.insertCell();
                 td.classList.add('cell');
                 td.classList.add(row);
-                value = expense[row]
+                value = expense[row];
 
                 if (row == 'v' || row == 't') {
                 	value = parseFloat(value);
@@ -95,9 +95,9 @@
                 		td.classList.add('green');
                 	else
                 		td.classList.add('red');
-                }
+                    value = value.toFixed(2);
+                }                
 
-                
                 if (row == 'd') // Convert to date
                     value = new Date(value).toLocaleDateString();
 
