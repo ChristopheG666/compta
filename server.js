@@ -1,7 +1,6 @@
 const http = require("http");
 const { URL } = require('url');
 const { parse: parseQuery } = require('querystring');
-var Iconv  = require('iconv').Iconv;
 
 const fs = require('fs');
 
