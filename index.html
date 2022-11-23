@@ -21,7 +21,7 @@
     <DIV id="tablediv"></DIV>
     
     <SCRIPT>
-    const DEBUG = false;
+    const DEBUG = true;
     newId = 0;
 
     function httpGet(theUrl, param) {
@@ -33,6 +33,17 @@
         return xmlHttp.responseText;
     }
 
+    function readConfig() {
+        configStr = httpGet("/config.json", null);
+        if (DEBUG)
+            console.log("Received config content: " + configStr);
+        config = JSON.parse(configStr);
+        if (DEBUG)
+            console.log(config);
+        return config;
+    }
+    var config = readConfig();
+
     function readExpenseTable() {
         comptaStr = httpGet("/read", null);
         if (DEBUG)
@@ -43,8 +54,8 @@
         // if (DEBUG)
         // 		document.write("<BR>" + JSON.stringify(compta, null, 4) + "<BR>");
 
-        const labels = compta.labels;
-        const order = compta.order;
+        const labels = config.labels;
+        const order = config.order;
         const totalL = order[order.length-1];
         newId = compta.expense.length;
 
@@ -143,7 +154,6 @@
 
         readExpenseTable();
     }
-
     readExpenseTable();
 
     // Set the current date
