@@ -1,6 +1,7 @@
 const http = require("http");
 const { URL } = require('url');
 const { parse: parseQuery } = require('querystring');
+var Iconv  = require('iconv').Iconv;
 
 const fs = require('fs');
 
@@ -71,7 +72,7 @@ const requestListener = function(req, res) {
                     // Erase the id
                     //console.log(json);
                     for (var i = 0; i < expense.expense.length; i++) {
-                        console.log(expense.expense[i].id );
+                        // console.log(expense.expense[i].id );
                         if (expense.expense[i].id === json) {
                             var spliced = expense.expense.splice(i, 1);
                             //console.log("Removed element: " + JSON.stringify(spliced));
