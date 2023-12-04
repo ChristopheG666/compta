@@ -82,6 +82,12 @@
 	        td.classList.add('total');
 	        td.innerHTML = "Total";
 	    }
+        {
+            const td = tr.insertCell();
+            td.classList.add('header');
+            td.classList.add('group');
+            td.innerHTML = "Groupe";
+        }
 	    // Compute total and newId
         total = 0.0;
         for (var i = compta.expense.length - 1; i >= 0; i--) {
@@ -99,6 +105,9 @@
                 const td = tr.insertCell();
                 td.classList.add('cell');
                 td.classList.add(row);
+                if (!(row in expense)) 
+                    continue;
+
                 value = expense[row];
 
                 if (row == 'v' || row == 't') {
@@ -117,20 +126,41 @@
             }
 
             // Add the delete button
-            const td = tr.insertCell();
-            td.classList.add('cell');
-            td.classList.add('delete');
-            button = document.createElement("button");
-            td.appendChild(button);
-            button.innerHTML = "X";
-            button.addEventListener("click", function () {
-                if (confirm("Etes vous sur de vouloir effacer cette depense?")) {
-                	if (DEBUG)
-                		console.log("Deleting " + expense['id'] + " / " + JSON.stringify(expense));
-                	httpGet("/delete?json=" + JSON.stringify(expense['id']));
-                	readExpenseTable();
-                }
-            });
+            {
+                const td = tr.insertCell();
+                td.classList.add('cell');
+                td.classList.add('delete');
+                button = document.createElement("button");
+                td.appendChild(button);
+                button.innerHTML = "X";
+                button.addEventListener("click", function () {
+                    if (confirm("Etes vous sur de vouloir effacer cette depense?")) {
+                    	if (DEBUG)
+                    		console.log("Deleting " + expense['id'] + " / " + JSON.stringify(expense));
+                    	httpGet("/delete?json=" + JSON.stringify(expense['id']));
+                    	readExpenseTable();
+                    }
+                });
+            }
+
+            {
+                // Add the group button
+                const td = tr.insertCell();
+                td.classList.add('cell');
+                td.classList.add('group');
+                button = document.createElement("button");
+                td.appendChild(button);
+                if ("grouped" in expense && expense["grouped"])
+                    button.innerHTML = "+";
+                else
+                    button.innerHTML = "-";
+                button.addEventListener("click", function () {
+                    if (DEBUG)
+                        console.log("Group from " + expense['id'] + " / " + JSON.stringify(expense));
+                    httpGet("/group?json=" + JSON.stringify(expense['id']));
+                    readExpenseTable();
+                });
+            }
         }
         const div = document.getElementById('tablediv');
         div.appendChild(tbl);
